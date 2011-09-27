@@ -99,6 +99,17 @@ class basicTests(unittest.TestCase):
 				n1.add(cidr)
 			self.assertEqual(n1.tocidr(), res)
 
+	def testAddoddcidr(self):
+		"""test that .addoddcidr() at least passes a basic test."""
+		n = netblock.IPRanges()
+		n.addoddcidr('127.0.0.1/24')
+		self.assertEqual(str(n), '<IPRanges: 127.0.0.0-127.0.0.255>')
+	def testRemoveoddcidr(self):
+		"""test that .removeoddcidr() at least passes a basic test."""
+		n = netblock.IPRanges('127.0.0.0/23')
+		n.removeoddcidr('127.0.0.1/24')
+		self.assertEqual(str(n), '<IPRanges: 127.0.1.0-127.0.1.255>')
+
 class failureTests(unittest.TestCase):
 	knownBadInitArgs = (
 		# Runt and perverse IP addresses.
@@ -132,6 +143,6 @@ class failureTests(unittest.TestCase):
 		"Test that IPRanges properly indicates bogus CIDR errors."
 		self.assertRaises(netblock.BadCIDRError, netblock.IPRanges,
 				  "127.0.0.1/24")
-					  
+
 if __name__ == "__main__":
 	unittest.main()
