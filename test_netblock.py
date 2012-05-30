@@ -17,6 +17,10 @@ class basicTests(unittest.TestCase):
 		('127/8', "<IPRanges: 127.0.0.0-127.255.255.255>"),
 		# Everything.
 		("0/0", "<IPRanges: 0.0.0.0-255.255.255.255>"),
+		# Tcpwrapper style prefixes.
+		("127.", "<IPRanges: 127.0.0.0-127.255.255.255>"),
+		("127.10.", "<IPRanges: 127.10.0.0-127.10.255.255>"),
+		("127.10.12.", "<IPRanges: 127.10.12.0-127.10.12.255>"),
 		)
 	def testStrResults(self):
 		"Test the result of str() of IPRanges on known values."
@@ -130,6 +134,10 @@ class failureTests(unittest.TestCase):
 		# Ranges that are missing low or hi.
 		"-127.0.0.0",
 		"127.0.0.0-",
+		# Bad tcpwrapper style prefixes.
+		"127..",
+		"256.",
+		"127.10.10.10.",
 		)
 	def testKnownInitFailures(self):
 		"Test that IPRanges fails to initialize in known situations."

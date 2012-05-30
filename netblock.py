@@ -101,6 +101,14 @@ def convrange(s):
 	if low > high:
 		raise NBError, "IP range has start larger than end."
 	return (low, high)
+def convtcpwr(s):
+	"""Returns the start and end IPs from a tcpwrapper style prefix.
+	We mostly assume that it is validly formatted."""
+	dots = s.count('.')
+	if not (1 <= dots <= 3):
+		raise NBError, "invalid number of dots in tcpwrapper prefix"
+	cidr = 	"%s/%d" % (s[:-1], 8 * dots)
+	return convcidr(cidr, 0)
 
 # Convert an incoming string to an IP address range. An incoming
 # string is either an IP address, a CIDR netblock, or a string
@@ -111,7 +119,9 @@ def convert(s, strict = 1):
 	"""Return a (low,high) IP number tuple for s, regardless of
 	whether s is a CIDR, an IP address, or a range. strict is
 	whether the CIDR is allowed to be an odd CIDR."""
-	if '/' in s:
+	if s[-1] == '.':
+		return convtcpwr(s)
+	elif '/' in s:
 		return convcidr(s, strict)
 	elif '-' in s:
 		return convrange(s)
@@ -177,10 +187,12 @@ class IPRanges(ranges.Ranges):
 	is included in the set of address ranges. The length of an IPRanges
 	object is how many IP addresses it contains.
 	
-	The general interfaces accept three forms of addresses or address
-	ranges: single IP address, CIDRs, or LOWIP-HIGHIP ranges. CIDRs
-	must normally be 'proper', where the IP address is the low end of
-	the proper CIDR. CIDRs may be specified in short form, eg 127/8.
+	The general interfaces accept four forms of addresses or
+	address ranges: single IP address, CIDRs, LOWIP-HIGHIP ranges,
+	or tcpwrappers style prefixes (eg '127.10.'). CIDRs must
+	normally be 'proper', where the IP address is the low end of
+	the proper CIDR. CIDRs may be specified in short form, eg
+	127/8.
 
 	This is built on top of ranges.Ranges; see there for more things."""
 	def __init__(self, ival = None):
