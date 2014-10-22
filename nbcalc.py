@@ -62,13 +62,13 @@ def process(args):
 		# We notice bad input by the errors that netblock throws.
 		try:
 			op(a)
-		except netblock.BadCIDRError, e:
+		except netblock.BadCIDRError as e:
 			# Because this happens SO OFTEN, give a specific
 			# message.
 			c = netblock.convcidr(a, 0)
 			die("bad CIDR %s. Should start at IP %s" % \
 			    (a, netblock.ipstr(c[0])))
-		except netblock.NBError, e:
+		except netblock.NBError as e:
 			die("bad argument %s: %s" % (a, str(e)))
 	dumpout(r)
 

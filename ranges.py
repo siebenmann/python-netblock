@@ -29,14 +29,14 @@ class Ranges:
 		"""Optional START,END arguments become the initial range."""
 		self._l = []
 		if len(args) not in (0, 2):
-			raise TypeError, "Ranges() takes either 0 or 2 arguments."
+			raise TypeError("Ranges() takes either 0 or 2 arguments.")
 		if args:
 			self._good(args[0], args[1])
 			self._l.append([args[0],args[1]])
 
 	def _good(self, start, end):
 		if start > end:
-			raise BadRange, "start > end"
+			raise BadRange("start > end")
 
 	# This much work for str() may be a bad plan.
 	def _rel(self, val):

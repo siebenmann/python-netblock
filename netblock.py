@@ -58,15 +58,15 @@ def strtoip(ipstr, min = 4):
 	n = ipstr.split('.')
 	ln = len(n)
 	if ln > 4 or ln < min:
-		raise NBError, "Invalid number of IP octets"
+		raise NBError("Invalid number of IP octets")
 	for i in n:
 		res = res << 8L
 		try:
 			ot = int(i)
 		except ValueError:
-			raise NBError, "invalid IP octet"
+			raise NBError("invalid IP octet")
 		if ot < 0 or ot > 255:
-			raise NBError, "invalid IP octet"
+			raise NBError("invalid IP octet")
 		res = res + ot
 	# Now fix up for omitted trailing octets.
 	res = res << (8L * (4-ln))
@@ -84,14 +84,14 @@ def convcidr(cstr, strict = 1):
 	try:
 		size = int(cstr[pos+1:])
 	except ValueError:
-		raise NBError, "invalid CIDR size"
+		raise NBError("invalid CIDR size")
 	if size < 0 or size > 32:
-		raise NBError, "CIDR size not in 0 to 32"
+		raise NBError("CIDR size not in 0 to 32")
 	res = cidrrange(ip, size)
 	# For a strict check, the start IP must be the low IP of the
 	# CIDR range.
 	if strict and res[0] != ip:
-		raise BadCIDRError, "CIDR start IP is not properly aligned: "+cstr
+		raise BadCIDRError("CIDR start IP is not properly aligned: "+cstr)
 	return res
 def convrange(s):
 	"""Returns the start and end IPs from a string range."""
@@ -99,14 +99,14 @@ def convrange(s):
 	low = strtoip(s[:pos])
 	high = strtoip(s[pos+1:])
 	if low > high:
-		raise NBError, "IP range has start larger than end."
+		raise NBError("IP range has start larger than end.")
 	return (low, high)
 def convtcpwr(s):
 	"""Returns the start and end IPs from a tcpwrapper style prefix.
 	We mostly assume that it is validly formatted."""
 	dots = s.count('.')
 	if not (1 <= dots <= 3):
-		raise NBError, "invalid number of dots in tcpwrapper prefix"
+		raise NBError("invalid number of dots in tcpwrapper prefix")
 	cidr = 	"%s/%d" % (s[:-1], 8 * dots)
 	return convcidr(cidr, 0)
 
